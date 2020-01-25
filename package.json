@@ -12,7 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "get-urls": "^9.2.0",
     "isomorphic-unfetch": "^3.0.0",
+    "moment": "^2.24.0",
     "next": "^9.2.1",
     "react": "^16.9.0",
     "react-custom-errors": "^1.0.9",
