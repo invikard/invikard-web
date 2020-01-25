@@ -70,6 +70,7 @@ export const loadAndValidateMedia = async (profile) => {
         if (status !== 200) throw new Error('Something went wrong');
         let media = await res.json();
         media = media.data.user.edge_owner_to_timeline_media.edges;
+        console.log("fetch url ", fetchUrl);
         let nodes = [];
         for (let i = 0; i < media.length; i++) {
             let node = {
@@ -81,13 +82,43 @@ export const loadAndValidateMedia = async (profile) => {
                 tagged_user: media[i].node.edge_media_to_tagged_user,
                 comments: media[i].node.edge_media_to_comment
             };
-
             nodes.push(node);
         }
+
+        console.log("Total nodes ", nodes.length);
 
         return validateAll({nodes, profile});
 
     }catch (e) {
         throw e;
     }
+};
+
+export const getErrorView = (data) => {
+    let errorView = ``;
+    if (data.success === false) {
+        errorView += `${data.message}`
+    } else {
+        try {
+            if (data.is_private)
+                errorView += `<br/>🤔 Akun Private`;
+            if (!data.is_config)
+                errorView += `<br />🤔 Konfigurasi akun belum sesuai`;
+            if (!data.is_banner)
+                errorView += `<br />🤔 Detil acara tidak ditemukan/belum sesuai`;
+            if (!data.is_date)
+                errorView += `<br />🤔 Detil waktu tidak ditemukan/belum sesuai`;
+            if (!data.is_place || !data.is_map_url)
+                errorView += `<br />🤔 Detil tempat tidak ditemukan/belum sesuai`;
+            if (!data.is_bride)
+                errorView += `<br />🤔 Detil <code>bride</code> tidak ditemukan/belum sesuai`;
+            if (!data.is_groom)
+                errorView += `<br />🤔 Detil <code>groom</code> tidak ditemukan/belum sesuai`;
+            if (!data.is_comment)
+                errorView += `<br />🤔 Detil <code>comment</code> tidak ditemukan/belum sesuai`
+        } catch (error) {
+            errorView += `${error.message}`
+        }
+    }
+    return errorView;
 };

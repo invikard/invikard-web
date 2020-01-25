@@ -9,7 +9,7 @@ import React from "react";
 import { validateProfile } from "../../utils/Profile";
 
 
-const getErrorView = (data) => {
+const getError = (data) => {
     let errorView = ``;
     if (data.success === false) {
         errorView += `${data.message}`
@@ -17,20 +17,6 @@ const getErrorView = (data) => {
         try {
             if (data.is_private)
                 errorView += `<br/>🤔 Akun Private`;
-            if (!data.is_config)
-                errorView += `<br />🤔 Konfigurasi akun belum sesuai`;
-            if (!data.is_banner)
-                errorView += `<br />🤔 Detil acara tidak ditemukan/belum sesuai`;
-            if (!data.is_date)
-                errorView += `<br />🤔 Detil waktu tidak ditemukan/belum sesuai`;
-            if (!data.is_place || !data.is_map_url)
-                errorView += `<br />🤔 Detil tempat tidak ditemukan/belum sesuai`;
-            if (!data.is_bride)
-                errorView += `<br />🤔 Detil <code>bride</code> tidak ditemukan/belum sesuai`;
-            if (!data.is_groom)
-                errorView += `<br />🤔 Detil <code>groom</code> tidak ditemukan/belum sesuai`;
-            if (!data.is_comment)
-                errorView += `<br />🤔 Detil <code>comment</code> tidak ditemukan/belum sesuai`
         } catch (error) {
             errorView += `${error.message}`
         }
@@ -41,7 +27,7 @@ const getErrorView = (data) => {
 export default function Post(props) {
 
 
-    const errorView = getErrorView(props.data);
+    const errorView = getError(props.data);
 
     if (errorView === '') {
         return <Theme1

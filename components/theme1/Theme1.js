@@ -2,14 +2,37 @@ import React, { useState, useEffect  } from 'react';
 import Head from 'next/head';
 import { NextScript, Main } from 'next/document';
 import fetch from 'isomorphic-unfetch';
+import { loadAndValidateMedia } from "../../utils/Profile";
+import Error from "../error/error";
+import { getErrorView } from "../../utils/Profile";
+import ReactHtmlParser from 'react-html-parser';
+
 
 const Theme1 = props => {
 
     //props.data.banner.caption = props.data.banner.caption.replace(/\n/g, "<br /> ");
-    const [comments, setComments] = useState(props.data.comments.comments.edges);
-    const [pageInfo, setPageInfo] = useState(props.data.comments.comments.page_info);
+    //const [comments, setComments] = useState(props.data.comments.comments.edges);
+    //const [pageInfo, setPageInfo] = useState(props.data.comments.comments.page_info);
 
     //useEffect( () => { loadMoreComments(comments) }, [ comments ] );
+
+    const [loading, setLoading] = useState(true);
+    const {errorView, setErrorView} = useState(undefined);
+
+    if(loading) {
+        console.log("shitttttttttt");
+        loadAndValidateMedia(props.data).then(data => {
+            props.data = data;
+            console.log("shitttttttttt 1");
+            console.log(props.data);
+            setErrorView(getErrorView(props.data));
+            setLoading(false);
+        }).catch(error => {
+            console.log("shitttttttttt 2");
+            console.log(error);
+            setLoading(false);
+        });
+    }
 
      async function loadMoreComments(params) {
 
@@ -36,6 +59,23 @@ const Theme1 = props => {
             setComments([...comments, ...data.edges]);
             return comments;
         }
+    }
+
+    if(loading === true){
+        return (<div>
+            Loading...
+        </div>)
+    }
+
+    if(errorView && errorView !== ''){
+        let _append = `Tidak dapat menampilkan halaman, karena:`;
+        _append = _append + errorView;
+
+        return <div style={{ paddingLeft: '10px', paddingRight: '10px' }}>
+            <Error
+                statusCode={"🙏"}
+                message={ReactHtmlParser(_append)} />
+        </div>
     }
 
     return (
