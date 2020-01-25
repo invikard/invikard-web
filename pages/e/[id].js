@@ -6,6 +6,7 @@ import dummy from './dummy';
 import Error from '../../components/error/error'
 import ReactHtmlParser from 'react-html-parser';
 import React from "react";
+import { validateProfile } from "../../utils/Profile";
 
 
 const getErrorView = (data) => {
@@ -31,7 +32,7 @@ const getErrorView = (data) => {
             if (!data.is_comment)
                 errorView += `<br />🤔 Detil <code>comment</code> tidak ditemukan/belum sesuai`
         } catch (error) {
-
+            errorView += `${error.message}`
         }
     }
     return errorView;
@@ -60,7 +61,7 @@ export default function Post(props) {
 }
 
 Post.getInitialProps = async function ({ query: { id } }) {
-    const res = await fetch(`https://invikard-api.hynra.now.sh/${id}`, {
+    /*const res = await fetch(`https://invikard-api.hynra.now.sh/${id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -72,12 +73,25 @@ Post.getInitialProps = async function ({ query: { id } }) {
 
 
     if (id === 'invikard.demo') {
-        //data.comments.comments = dummy;
     }
 
     if (status === 200) data.success = true;
     else data.success = false;
     return {
         data: data
-    };
+    };*/
+    try {
+        const profile = await validateProfile(id);
+        profile.success = true;
+        return {
+            data: profile
+        };
+    }catch (e) {
+        return {
+            data: {
+                success: false,
+                message: e.message
+            }
+        }
+    }
 };
