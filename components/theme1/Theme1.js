@@ -20,16 +20,11 @@ const Theme1 = props => {
     const {errorView, setErrorView} = useState(undefined);
 
     if(loading) {
-        console.log("shitttttttttt");
         loadAndValidateMedia(props.data).then(data => {
             props.data = data;
-            console.log("shitttttttttt 1");
-            console.log(props.data);
             setErrorView(getErrorView(props.data));
             setLoading(false);
         }).catch(error => {
-            console.log("shitttttttttt 2");
-            console.log(error);
             setLoading(false);
         });
     }
