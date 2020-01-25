@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect  } from 'react';
 import Head from 'next/head';
 import { NextScript, Main } from 'next/document';
@@ -32,7 +31,7 @@ const Theme1 = props => {
         if (status !== 200)
             throw new Error("error get data");
         else {
-       
+
             setPageInfo(data.page_info);
             setComments([...comments, ...data.edges]);
             return comments;

@@ -19,7 +19,9 @@ export const validateProfile = async (userName) => {
             username: profile.graphql.user.username,
             biography: profile.graphql.user.biography,
             link: profile.graphql.user.external_url,
-            is_following: profile.graphql.user.follows_viewer
+            is_following: profile.graphql.user.follows_viewer,
+            hasNext: profile.graphql.user.edge_owner_to_timeline_media.page_info.has_next_page,
+            end_cursor: profile.graphql.user.edge_owner_to_timeline_media.page_info.end_cursor,
         };
 
         if (profile.is_private) throw new Error("Account is private");
@@ -45,11 +47,19 @@ export const validateProfile = async (userName) => {
         });
 
         if (configs.key && configs.type && configs.theme)
-            console.log("profile is valid");
+            console.log("profile is valid ", profile);
         else throw new Error("Account is not valid with Invikard configuration");
         return profile;
 
     } catch (e) {
         throw new Error(e.message);
+    }
+};
+
+export const loadAndValidateMedia = async (id) => {
+    try {
+
+    }catch (e) {
+        throw e;
     }
 };
