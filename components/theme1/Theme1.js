@@ -1,10 +1,8 @@
-import React, { useState, useEffect  } from 'react';
+import React, {useState} from 'react';
 import Head from 'next/head';
-import { NextScript, Main } from 'next/document';
 import fetch from 'isomorphic-unfetch';
-import { loadAndValidateMedia } from "../../utils/Profile";
+import {getErrorView, loadAndValidateMedia} from "../../utils/Profile";
 import Error from "../error/error";
-import { getErrorView } from "../../utils/Profile";
 import ReactHtmlParser from 'react-html-parser';
 
 
@@ -12,17 +10,21 @@ const Theme1 = props => {
 
     //props.data.banner.caption = props.data.banner.caption.replace(/\n/g, "<br /> ");
     //const [comments, setComments] = useState(props.data.comments.comments.edges);
+    const [comments, setComments] = useState([]);
     //const [pageInfo, setPageInfo] = useState(props.data.comments.comments.page_info);
 
     //useEffect( () => { loadMoreComments(comments) }, [ comments ] );
 
     const [loading, setLoading] = useState(true);
-    const {errorView, setErrorView} = useState(undefined);
+    const [errorView, setErrorView] = useState(undefined);
+    const [data, setData] = useState(undefined);
 
-    if(loading) {
-        loadAndValidateMedia(props.data).then(data => {
-            props.data = data;
-            setErrorView(getErrorView(props.data));
+    if (loading) {
+        loadAndValidateMedia(props.data).then(_data => {
+            setData(_data);
+            if (_data.comments && _data.comments.comments && _data.comments.comments.edges)
+                setComments(_data.comments.comments.edges);
+            setErrorView(getErrorView(_data));
             setLoading(false);
         }).catch(error => {
             setLoading(false);
@@ -50,13 +52,13 @@ const Theme1 = props => {
             throw new Error("error get data");
         else {
 
-            setPageInfo(data.page_info);
-            setComments([...comments, ...data.edges]);
+            //setPageInfo(data.page_info);
+            //setComments([...comments, ...data.edges]);
             return comments;
         }
     }
 
-    if(loading === true){
+    if (loading === true || data === undefined) {
         return (<div>
             Loading...
         </div>)
@@ -114,7 +116,10 @@ const Theme1 = props => {
                         </div>
                     </nav>
 
-                    <header id="fh5co-header" className="fh5co-cover" role="banner" style={{ backgroundImage: `url("${props.data.banner.image}")`, "dataStellarBackgroundRatio": "0.5" }}>
+                    <header id="fh5co-header" className="fh5co-cover" role="banner" style={{
+                        backgroundImage: `url("${data.banner.image}")`,
+                        "dataStellarBackgroundRatio": "0.5"
+                    }}>
                         <div className="overlay"></div>
                         <div className="container">
                             <div className="row">
@@ -122,13 +127,14 @@ const Theme1 = props => {
                                     <div className="display-t">
                                         <div className="display-tc">
                                             <h1>
-                                                {props.data.bride.tagged_user.edges[0].node.user.full_name} <br />
-                                                & <br />
-                                                {props.data.groom.tagged_user.edges[0].node.user.full_name}
+                                                {data.bride.tagged_user.edges[0].node.user.full_name} <br/>
+                                                & <br/>
+                                                {data.groom.tagged_user.edges[0].node.user.full_name}
                                             </h1>
                                             <h2>We Are Getting Married</h2>
                                             <div className="simply-countdown simply-countdown-one"></div>
-                                            <p><a href={props.data.date.date_url} target="_blank" className="btn btn-default btn-sm">Save the date</a></p>
+                                            <p><a href={data.date.date_url} target="_blank"
+                                                  className="btn btn-default btn-sm">Save the date</a></p>
                                         </div>
                                     </div>
                                 </div>
@@ -142,35 +148,36 @@ const Theme1 = props => {
                             <div className="row">
                                 <div className="col-md-8 col-md-offset-2 text-center fh5co-heading">
                                     <h2>Hello!</h2>
-                                    <h3>{props.data.biography}</h3>
+                                    <h3>{data.biography}</h3>
                                     <p>We invited you to celebrate our wedding</p>
                                 </div>
                             </div>
                             <div className="couple-wrap">
                                 <div className="couple-half">
                                     <div className="groom">
-                                        <img src={props.data.groom.image} alt="groom" className="img-responsive" />
+                                        <img src={data.groom.image} alt="groom" className="img-responsive"/>
                                     </div>
                                     <div className="desc-groom">
-                                        <h3>{props.data.groom.tagged_user.edges[0].node.user.full_name}</h3>
-                                        <p>{props.data.groom.caption}</p>
+                                        <h3>{data.groom.tagged_user.edges[0].node.user.full_name}</h3>
+                                        <p>{data.groom.caption}</p>
                                     </div>
                                 </div>
                                 <p className="heart text-center"><i className="icon-heart2"></i></p>
                                 <div className="couple-half">
                                     <div className="bride">
-                                        <img src={props.data.bride.image} alt="groom" className="img-responsive" />
+                                        <img src={bride.image} alt="groom" className="img-responsive"/>
                                     </div>
                                     <div className="desc-bride">
-                                        <h3>{props.data.bride.tagged_user.edges[0].node.user.full_name}</h3>
-                                        <p>{props.data.bride.caption}</p>
+                                        <h3>{data.bride.tagged_user.edges[0].node.user.full_name}</h3>
+                                        <p>{data.bride.caption}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div id="fh5co-event" className="fh5co-bg" style={{ "backgroundImage": `url("${props.data.place.image}")` }}>
+                    <div id="fh5co-event" className="fh5co-bg"
+                         style={{"backgroundImage": `url("${data.place.image}")`}}>
                         <div className="overlay"></div>
                         <div className="container">
                             <div className="row">
@@ -189,12 +196,16 @@ const Theme1 = props => {
 
                                                     <div className="event-col">
                                                         <i className="icon-calendar"></i>
-                                                        <span>{props.data.date.caption}</span>
+                                                        <span>{data.date.caption}</span>
                                                     </div>
                                                     <div className="fh5co-heading">
-                                                        <p style={{ "whiteSpace": "pre-line" }}>{props.data.banner.caption}</p>
+                                                        <p style={{"whiteSpace": "pre-line"}}>{data.banner.caption}</p>
                                                     </div>
-                                                    <a href={props.data.place.map_url} target="_blank"><button type="submit" className="btn btn-success">Lokasi di Maps</button></a>
+                                                    <a href={data.place.map_url} target="_blank">
+                                                        <button type="submit" className="btn btn-success">Lokasi di
+                                                            Maps
+                                                        </button>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -218,12 +229,13 @@ const Theme1 = props => {
                                 <div className="col-md-12 col-md-offset-0">
                                     <ul className="timeline">
 
-                                        {props.data && props.data.stories.map((story, index) =>
+                                        {data && data.stories.map((story, index) =>
 
                                             (index % 2 === 0) ?
 
                                                 <li className="timeline-inverted" key={index.toString()}>
-                                                    <div className="timeline-badge" style={{ "backgroundImage": `url("${story.image}")` }}></div>
+                                                    <div className="timeline-badge"
+                                                         style={{"backgroundImage": `url("${story.image}")`}}></div>
                                                     <div className="timeline-panel">
                                                         <div className="timeline-heading">
                                                             <h3 className="timeline-title">{story.title}</h3>
@@ -266,11 +278,16 @@ const Theme1 = props => {
                                 <div className="col-md-12">
                                     <ul id="fh5co-gallery-list">
 
-                                        {props.data && props.data.gallery.map((gallery) =>
-                                            <li key={gallery.image} className="one-third" style={{ "backgroundImage": `url("${gallery.image}")` }}>
+                                        {data && data.gallery.map((gallery) =>
+                                            <li key={gallery.image} className="one-third"
+                                                style={{"backgroundImage": `url("${gallery.image}")`}}>
                                                 <a href={gallery.image} data-lightbox="photos">
                                                     <div className="case-studies-summary">
-                                                        <h3 style={{ background: "rgba(255, 255, 255, 0.7", padding: "10px", textAlign: "center" }}>{props.data.bride.tagged_user.edges[0].node.user.full_name} & {props.data.groom.tagged_user.edges[0].node.user.full_name}</h3>
+                                                        <h3 style={{
+                                                            background: "rgba(255, 255, 255, 0.7",
+                                                            padding: "10px",
+                                                            textAlign: "center"
+                                                        }}>{data.bride.tagged_user.edges[0].node.user.full_name} & {data.groom.tagged_user.edges[0].node.user.full_name}</h3>
                                                     </div>
                                                 </a>
                                             </li>
@@ -282,7 +299,7 @@ const Theme1 = props => {
                         </div>
                     </div>
 
-                    {props.data.is_video_url && <div id="fh5co-services" className="fh5co-bg">
+                    {data.is_video_url && <div id="fh5co-services" className="fh5co-bg">
                         <div className="overlay"></div>
                         <div style={{width: "100%", paddingLeft: "10px", paddingRight: "10px"}}>
 
@@ -296,7 +313,11 @@ const Theme1 = props => {
                             <div className="row">
                                 <div className="col-md-12">
                                     <div class="videoWrapper fh5co-video fh5co-bg" style={{ "backgroundImage": `url("/static/images/img_bg_3.jpg")` }}>
-                                        <iframe width="560" height="315" src={`https://www.youtube.com/embed/${props.data.video.video_id}`} frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                        <iframe width="560" height="315"
+                                                src={`https://www.youtube.com/embed/${data.video.video_id}`}
+                                                frameborder="0"
+                                                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen></iframe>
                                     </div>
 
                                 </div>
@@ -321,7 +342,11 @@ const Theme1 = props => {
                                 <div className="col-md-10 col-md-offset-1">
 
                                     <div className="col-md-12 col-sm-12 text-center ">
-                                        <a href={`https://instagram.com/p/${props.data.comments.shortcode}`}><button type="submit" className="btn btn-default btn-lg">Kirim Ucapan Selamat</button></a>
+                                        <a href={`https://instagram.com/p/${data.comments.shortcode}`}>
+                                            <button type="submit" className="btn btn-default btn-lg">Kirim Ucapan
+                                                Selamat
+                                            </button>
+                                        </a>
                                     </div>
 
                                 </div>
@@ -379,7 +404,7 @@ const Theme1 = props => {
                                                             style={{ background: "#F14E95", color: "#ffffff" }}
                                                             onClick={() => {
                                                                 loadMoreComments({
-                                                                    shortcode:  props.data.comments.shortcode, // "B1h04knHAEi",
+                                                                    shortcode: data.comments.shortcode, // "B1h04knHAEi",
                                                                     first: 30,
                                                                     after: pageInfo.end_cursor // pageInfo.end_cursor
                                                                 });
@@ -407,7 +432,7 @@ const Theme1 = props => {
                                 <div className="col-md-12 text-center">
                                     <div>
                                         <small className="block">&copy; 2019 Invikard App. All Rights Reserved.</small>
-                                        {props.data.username === 'invikard.demo' && <small>
+                                        {data.username === 'invikard.demo' && <small>
                                             Demo images by <a href="https://unsplash.com" target="_blank">Unsplash</a>
                                         </small>}
                                         <small className="block">Designed by <a href="http://freehtml5.co/" target="_blank">FREEHTML5.co</a></small>

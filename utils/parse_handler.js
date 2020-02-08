@@ -2,7 +2,7 @@ import * as getUrls from 'get-urls';
 import * as moment from 'moment'
 
 export const validateAll = (data) => {
-    const { nodes, profile } = data;
+    let { nodes, profile } = data;
     const requiredHastags = ['#invikardvideo', '#invikarddate', '#invikardplace',
         '#invikardbride', '#invikardgroom', '#invikardbanner', '#invikardgallery', "#invikardstory", "#invikardcomments"];
 
@@ -22,7 +22,6 @@ export const validateAll = (data) => {
         stories: []
     };
 
-    console.log(nodes.length);
     nodes.map(node => {
         let strs = node.caption.split(" ");
         let ht = "none";
@@ -33,7 +32,6 @@ export const validateAll = (data) => {
         });
 
         const urlRegex = /(https?:\/\/[^ ]*)/;
-
         switch (ht) {
             case requiredHastags[0]:
                 valids.is_video = true;
@@ -76,12 +74,12 @@ export const validateAll = (data) => {
             case requiredHastags[3]:
                 valids.is_bride = true;
                 valids.bride = node;
-                if (node.tagged_user.edges.length > 0) valids.is_bride = true;
+                if ((node.tagged_user && node.tagged_user.edges && node.tagged_user.edges.length) > 0) valids.is_bride = true;
                 break;
             case requiredHastags[4]:
                 valids.is_groom = true;
                 valids.groom = node;
-                if (node.tagged_user.edges.length > 0) valids.is_groom = true;
+                if ((node.tagged_user && node.tagged_user.edges && node.tagged_user.edges.length) > 0) valids.is_groom = true;
                 break;
             case requiredHastags[5]:
                 valids.is_banner = true;
@@ -100,13 +98,12 @@ export const validateAll = (data) => {
                 ht = ht.replace(num, "");
                 num = parseInt(num);
                 if(Number.isInteger(num) && (ht === requiredHastags[7])){
-                    node.title = node.caption.split(" ")[0]
+                    node.title = node.caption.split(" ")[0];
                     valids.stories[num] = node;
                 }
                 break;
         }
     });
-
     valids.stories = valids.stories.filter(item => item !== null);
 
     // validate theme
@@ -144,6 +141,8 @@ export const validateAll = (data) => {
         `.trimLeft().trimRight();
         valids.date.date_url = valids.date.date_url.replace(/\n/g, " ")
     }
+
+
 
     return Object.assign(configs, profile, valids);
 };

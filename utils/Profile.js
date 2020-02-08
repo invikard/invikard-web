@@ -50,7 +50,7 @@ export const validateProfile = async (userName) => {
         });
 
         if (configs.key && configs.type && configs.theme)
-            console.log("profile is valid ", profile);
+            console.log("profile is valid ");
         else throw new Error("Account is not valid with Invikard configuration");
         return profile;
 
@@ -62,7 +62,8 @@ export const validateProfile = async (userName) => {
 export const loadAndValidateMedia = async (profile) => {
     try {
         const {id, hasNext, end_cursor} = profile;
-        const fetchUrl = `${instagramGraphQL}?query_hash=472f257a40c653c64c666ce877d59d2b&variables={"id":"${id}","first":100,"after":"${end_cursor}"}`;
+        //const fetchUrl = `${instagramGraphQL}?query_hash=472f257a40c653c64c666ce877d59d2b&variables={"id":"${id}","first":100,"after":"${end_cursor}"}`;
+        const fetchUrl = `${instagramGraphQL}?query_id=17888483320059182&variables={"id":"17799004321","first":50,"after":null}`;
         const res = await fetch(fetchUrl, {
             method: 'GET',
         });
@@ -86,8 +87,8 @@ export const loadAndValidateMedia = async (profile) => {
         }
 
         console.log("Total nodes ", nodes.length);
-
-        return validateAll({nodes, profile});
+        const payload = validateAll({profile, nodes});
+        return payload;
 
     }catch (e) {
         throw e;
