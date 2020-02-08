@@ -128,6 +128,18 @@ export const validateAll = (data) => {
             configs.theme = ht;
             profile.biography = profile.biography.replace(ht, "").trim();
         }
+
+        // check groom & bride name in biography
+        if(profile.biography.split("&").length >= 2){
+            const members = profile.biography.split("&");
+            valids.groom.name = members[0].trimStart().trimEnd();
+            valids.bride.name = members[1].trimStart().trimEnd();
+        }else {
+            // invalidate groom & bride
+            valids.is_groom = false;
+            valids.is_bride = false;
+        }
+
     });
 
     if (configs.key && configs.type && configs.theme)

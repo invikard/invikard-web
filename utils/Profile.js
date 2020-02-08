@@ -49,8 +49,9 @@ export const validateProfile = async (userName) => {
             }
         });
 
-        if (configs.key && configs.type && configs.theme)
-            console.log("profile is valid ");
+        if (configs.key && configs.type && configs.theme) {
+            //  console.log("profile is valid ");
+        }
         else throw new Error("Account is not valid with Invikard configuration");
         return profile;
 
@@ -71,7 +72,6 @@ export const loadAndValidateMedia = async (profile) => {
         if (status !== 200) throw new Error('Something went wrong');
         let media = await res.json();
         media = media.data.user.edge_owner_to_timeline_media.edges;
-        console.log("fetch url ", fetchUrl);
         let nodes = [];
         for (let i = 0; i < media.length; i++) {
             let node = {
@@ -85,8 +85,6 @@ export const loadAndValidateMedia = async (profile) => {
             };
             nodes.push(node);
         }
-
-        console.log("Total nodes ", nodes.length);
         const payload = validateAll({profile, nodes});
         return payload;
 
@@ -103,7 +101,7 @@ export const getErrorView = (data) => {
         try {
             if (data.is_private)
                 errorView += `<br/>🤔 Akun Private`;
-            if (!data.is_config)
+            if (data.is_config === false)
                 errorView += `<br />🤔 Konfigurasi akun belum sesuai`;
             if (!data.is_banner)
                 errorView += `<br />🤔 Detil acara tidak ditemukan/belum sesuai`;
