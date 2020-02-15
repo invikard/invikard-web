@@ -17,7 +17,8 @@ async function bootstrap() {
   // app.engine('mustache', mustacheExpress());
   // app.set('view engine', 'mustache');
   app.set('view engine', 'jsx');
-  app.engine('jsx', reactExpress.createEngine());
+  const options = { beautify: true };
+  app.engine('jsx', reactExpress.createEngine(options));
 
   await app.listen(3000);
 }

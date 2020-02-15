@@ -9,6 +9,6 @@ export class AppController {
   @Get()
   render() {
     const message = this.appService.getHello();
-    return { name: 'NestJS' };
+    return { name: 'NestJS', enabled: true };
   }
 }
