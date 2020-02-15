@@ -5,6 +5,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
+    "start:ssr": "ts-node --project tsconfig.server.json src/main.ts",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -23,8 +24,12 @@
     "@nestjs/common": "^6.7.2",
     "@nestjs/core": "^6.7.2",
     "@nestjs/platform-express": "^6.7.2",
+    "@react-ssr/nestjs-express": "^0.19.9",
+    "express-react-views": "^0.11.0",
     "mustache": "^4.0.0",
     "mustache-express": "^1.3.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.3"
