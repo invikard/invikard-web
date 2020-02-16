@@ -5,10 +5,10 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Render('index')
   @Get()
-  render() {
-    const message = this.appService.getHello();
-    return { name: 'NestJS', enabled: true };
+  @Render('index')
+  public showHome() {
+    const user = { name: 'NestJS' };
+    return { user };
   }
 }
